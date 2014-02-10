@@ -1,0 +1,26 @@
+{
+  "name": "ufoCrawl",
+  "version": "0.0.1",
+  "description": "crawler to create a database of UFO Sightings",
+  "main": "go.js",
+  "dependencies": {
+    "cheerio": "~0.12.4",
+    "elasticsearchclient": "~0.5.3",
+    "url": "~0.7.9",
+    "strsplit": "~1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node probe.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "crawler",
+    "ufo"
+  ],
+  "author": "profBurial",
+  "license": "DBAD"
+}
