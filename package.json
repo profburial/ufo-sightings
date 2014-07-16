@@ -7,6 +7,7 @@
     "cheerio": "~0.12.4",
     "elasticsearchclient": "~0.5.3",
     "url": "~0.7.9",
+    "moment": "~2.5.1",
     "strsplit": "~1.0.0"
   },
   "devDependencies": {},

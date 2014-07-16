@@ -15,6 +15,7 @@ var http            = require('http'),
     cheerio         = require('cheerio'),
     ElasticSearch   = require('elasticsearchclient'),
     url             = require('url'),
+    moment          = require('moment'),
     split           = require('strsplit'),
     crypto          = require('crypto');
     
@@ -48,15 +49,17 @@ var http            = require('http'),
             id                              // Create unique hash of URL for ID
         ).on('data', function(response) {
             response = JSON.parse(response);
-            if (response['ok'] == true) {
-                console.log('info', "+" + data.url + " indexed");
+            if (response['created'] == true) {
+                console.log(data.url + " indexed");
+            } else if (response['created'] == false) {
+                console.log(data.url + " updated [version:" + response['_version'] + "]");
             } else {
-                console.log('error', response);
+                console.log(response);
             }
         }).on('error', function(err) {
-            console.log('error', "-" + data.url );
+            console.log('error', "-" + id );
             console.log('error', err);
-        }).exec();
+        }).exec()
     }
     
     //Crawl!
@@ -98,19 +101,27 @@ var http            = require('http'),
                             
                             //Get City, State
                             var location = split( columns[3].replace(/\s+/g, ' ').replace(/Location: /, ''), ',', 2 );
+
+                            //Occurred
+                            var occurred = columns[0].replace(/\s+/g, ' ').replace(/Occurred : /, '');
+                            var occurredFormatted = moment(occurred.substring(0, occurred.indexOf('(')).trim()).format();
                             
+                            //Reported
+                            var reported = columns[1].replace(/\s+/g, ' ').replace(/Reported: /, '');
+                            var reportedFormatted = moment(reported.substring(0, reported.indexOf('M')).trim() + 'M').format();
+
                             //Build index data
                             var data = {
                                 'url' : crawlOptions.hostname + crawlOptions.path,
                                 'body': $('body').text().replace(/\s+/g, ' '), //plaintext contents of page
-                                'occurred': columns[0].replace(/\s+/g, ' ').replace(/Occurred : /, ''),
-                                'reported': columns[1].replace(/\s+/g, ' ').replace(/Reported: /, ''),
-                                'posted': columns[2].replace(/\s+/g, ' ').replace(/Posted: /, ''),
+                                'occurred': occurredFormatted,
+                                'reported': reportedFormatted,
+                                'posted': moment(columns[2].replace(/\s+/g, ' ').replace(/Posted: /, '')).format(),
                                 'city': location[0],
                                 'state': location[1],
                                 'shape': columns[4].replace(/\s+/g, ' ').replace(/Shape: /, ''),
                                 'duration': columns[5].replace(/\s+/g, ' ').replace(/Duration:/, ''),
-                                'description': $('tbody tr:nth-child(2) td:first-child font:first-child').text().replace(/\s+/g, ' ')
+                                'description': $('tbody tr:nth-child(2) td:first-child font:first-child').text()
                             }
                             
                             //insert
@@ -134,7 +145,9 @@ var http            = require('http'),
                              link.match('ndxevent') == null &&
                              link.match('ndxpost') == null &&
                              link.match('ndxshape') == null &&
-                             link.match('www') == null
+                             link.match('www') == null &&
+                             link.match('http://go.microsoft.com/fwlink/?linkid=8180') == null &&
+                             link.match('javascript:history.back(1)') == null
                         )
                         {
                             crawl({

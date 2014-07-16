@@ -1,0 +1,42 @@
+{
+    "sighting": {
+        "properties": {
+            "url": {
+                "type": "string"
+            },
+            "body": {
+                "type": "string"
+            },
+            "occurred": {
+                "type" : "date",
+                "ignore_malformed" : true,
+                "format" : "yyyy-MM-dd'T'HH:mm:ssZ"
+            },
+            "reported": {
+                "type" : "date",
+                "ignore_malformed" : true,
+                "format" : "yyyy-MM-dd'T'HH:mm:ssZ"
+            },
+            "posted": {
+                "type" : "date",
+                "ignore_malformed" : true,
+                "format" : "yyyy-MM-dd'T'HH:mm:ssZ"
+            },
+            "city": {
+                "type": "string"
+            },
+            "state": {
+                "type": "string"
+            },
+            "shape": {
+                "type": "string"
+            },
+            "duration": {
+                "type": "string"
+            },
+            "description": {
+                "type": "string"
+            }
+        }
+    }
+}
