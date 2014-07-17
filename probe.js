@@ -105,10 +105,23 @@ var http            = require('http'),
                             //Occurred
                             var occurred = columns[0].replace(/\s+/g, ' ').replace(/Occurred : /, '');
                             var occurredFormatted = moment(occurred.substring(0, occurred.indexOf('(')).trim()).format();
+
+                            if( occurredFormatted == 'Invalid date' )
+                            {
+                                var occurredFormatted = moment(occurred).format();
+                            }
                             
                             //Reported
                             var reported = columns[1].replace(/\s+/g, ' ').replace(/Reported: /, '');
                             var reportedFormatted = moment(reported.substring(0, reported.indexOf('M')).trim() + 'M').format();
+
+                            if( reportedFormatted == 'Invalid date' )
+                            {
+                                var reportedFormatted = moment(reported).format();
+                            }
+
+                            //Posted
+                            var posted = moment(columns[2].replace(/\s+/g, ' ').replace(/Posted: /, '')).format();
 
                             //Build index data
                             var data = {
@@ -116,7 +129,8 @@ var http            = require('http'),
                                 'body': $('body').text().replace(/\s+/g, ' '), //plaintext contents of page
                                 'occurred': occurredFormatted,
                                 'reported': reportedFormatted,
-                                'posted': moment(columns[2].replace(/\s+/g, ' ').replace(/Posted: /, '')).format(),
+                                'posted': posted,
+                                'location': location[0] + ', ' + location[1],
                                 'city': location[0],
                                 'state': location[1],
                                 'shape': columns[4].replace(/\s+/g, ' ').replace(/Shape: /, ''),
@@ -146,8 +160,8 @@ var http            = require('http'),
                              link.match('ndxpost') == null &&
                              link.match('ndxshape') == null &&
                              link.match('www') == null &&
-                             link.match('http://go.microsoft.com/fwlink/?linkid=8180') == null &&
-                             link.match('javascript:history.back(1)') == null
+                             link.match('fwlink') == null &&
+                             link.match('javascript') == null
                         )
                         {
                             crawl({

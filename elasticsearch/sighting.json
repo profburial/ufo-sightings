@@ -22,6 +22,10 @@
                 "ignore_malformed" : true,
                 "format" : "yyyy-MM-dd'T'HH:mm:ssZ"
             },
+            "location": {
+                "type": "string",
+                "index": "analyzed"
+            },
             "city": {
                 "type": "string"
             },
